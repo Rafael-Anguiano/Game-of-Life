@@ -21,24 +21,16 @@ void printMatrix (vector<vector<bool>> matrix, int size) {
 }
 
 void askCoordinates (vector<vector<bool>>& matrix) {
-  int option = 0;
-  do {
-    int i, j;
+  int n = 0;
+  cout << "Quantity of coordinates to change: ";
+  cin >> n;
+  int x, y;
+  for (int i=0; i<n; i++) {
     cout << "Enter an X and Y coordinate: ";
-    cin >> j;
-    cin >> i;
-    matrix[i][j] = true;
-    
-    cout << endl;
-
-    printMatrix(matrix, matrix.size());
-
-    cout << endl;
-
-    cout << "If you want to exit type 1" << endl;
-    cout << "If you want to change other position type 0" << endl;
-    cin >> option;
-  } while (option != 1);
+    cin >> y;
+    cin >> x;
+    matrix[y][x] = true;
+  }
 }
 
 int validateNeighbours (vector<vector<bool>> matrix, int n, int i, int j) {
@@ -71,9 +63,23 @@ int main () {
     next.push_back(arr);
   }
 
-  askCoordinates(matrix);
+  int randomDistribution = false;
+  cout << "Do you want to fill with random?";
+  cin >> randomDistribution;
 
+  if (!randomDistribution) askCoordinates(matrix);
+  else {
+    for (int i=0; i<n; i++) {
+      for (int j=0; j<n; j++) {
+        matrix[i][j] = rand() % 2;
+      }
+    }
+  }
+
+  int rounds = 0;
+  bool haveChanged = true;
   while (getchar() != 'e') {
+    printMatrix(matrix, n);
     for (int i=0; i<n; i++) {
       for (int j=0; j<n; j++) {
         int num = validateNeighbours(matrix, n, i, j);
@@ -81,17 +87,22 @@ int main () {
           next[i][j] = true;
         } else if (matrix[i][j] == 0 && num == 3) {
           next[i][j] = true;
+          haveChanged = true;
         } else {
           next[i][j] = false;
+          haveChanged = true;
         }
       }
     }
     matrix = next;
-    printMatrix(matrix, n);
+    if (!haveChanged) break;
     cout << endl;
+    rounds++;
     cout << "Enter to continue or type 'e' to exit: ";
   }
 
+  cout << "Game finished" << endl;
+  cout << "Rounds: " << rounds << endl;
 
   return 0;
 }
